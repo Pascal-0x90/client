@@ -17,14 +17,14 @@ def main():
         exit(1)
 
     import pwn  # late import because pwntools messes up readline, needed by getpass
-
+    print(client.challenges())
     for challenge in client.challenges():
-        if challenge['name'] == 'cat' and challenge['category'] == '/bin':
+        if challenge['name'] == 'instance_1' and challenge['category'] == 'babysuid':
 
             path = challenge['category'] + '/' + challenge['name']
 
             pwn.log.info(f"Challenge: {challenge['id']} -- {path}")
-            client.work_on(challenge['id'])
+            client.work_on(challenge['id'], '/bin/cat')
 
             # You must `ssh-add <path to private key` first
             ssh = pwn.ssh('cse466', 'cse466.pwn.college', ssh_agent=True)
@@ -35,7 +35,7 @@ def main():
 
             if flag:
                 flag = flag['flag']
-                pwn.log.info(f"Flag: {flag}")
+                pwn.log.info("Flag: pwn_college{" + flag + "}")
 
                 correct_flag = client.submit_flag(challenge['id'], flag)
                 pwn.log.info(f"Correct: {correct_flag}")
